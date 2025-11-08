@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import {Camera} from 'expo-camera';
 import { useState, useEffect } from 'react';
-import { Button } from 'react-native';
+import { Button, Image } from 'react-native';
 
 
 export default function App() {
@@ -14,7 +14,7 @@ export default function App() {
 
   useEffect(()=>{
     (async ()=>{
-      const permisosMediaLibrary = await MediaLibrary.requestPermissionsAsync();
+      {/*const permisosMediaLibrary = await MediaLibrary.requestPermissionsAsync();*/}
       const { status } = await Camera.requestCameraPermissionsAsync();
       setPermisos(status === 'granted');
     })();
@@ -46,9 +46,12 @@ export default function App() {
   return (
     <View style={styles.container}>
       {permisos ? (
-      <Camera style = {{width:'100%'}} type = {tipoCamara} ref = {ref => setCameraRef(ref)}/>
+      <Camera style = {{height: 400}} type = {tipoCamara} ref = {ref => setCameraRef(ref)}/>
       ):(<Text>No acceso a la camera</Text>)}
       <Button title = "Tomar Foto" onPress = {tomarFoto}/>
+      {foto && (
+        <Image source = {{uri:foto}} style = {{width:300, height:400}}/>
+      )}
       <StatusBar style="auto" />
     </View>
   );
