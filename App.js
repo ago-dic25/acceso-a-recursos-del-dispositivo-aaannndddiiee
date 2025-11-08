@@ -1,8 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
-import {Camera, CameraType} from 'expo-camera';
-import {CameraTypes} from 'expo-camerera/build/Camera.types';
+import {Camera} from 'expo-camera';
+import { useState, useEffect } from 'react';
+import { Button } from 'react-native';
+
 
 export default function App() {
   const [permisos, setPermisos] = useState(null);
@@ -13,22 +15,19 @@ export default function App() {
   useEffect(()=>{
     (async ()=>{
       const permisosMediaLibrary = await MediaLibrary.requestPermissionsAsync();
-      const permisosCamara = await Camera.requestPermissionsAsync();
-      setPermisos(estatus.status === "granted");
-      if(!permisosCamara.granted){
-        console("Ncesita permisos");
-      }
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setPermisos(status === 'granted');
     })();
   }, []);
 
-  if(permisos === null || permisos === "denied"){
+  if(permisos === null || !permisos){
     return <Text>No se tienen permisos para la camara</Text>
   }
 
   const tomarFoto = async() => {
     if(cameraRef){
       try{
-        const datosFoto = await cameraRef.takePicture.Async();
+        const datosFoto = await cameraRef.takePictureAsync();
         setFoto(datosFoto.uri);
       }catch(error){
         console.log("error");
@@ -44,22 +43,22 @@ export default function App() {
       }
     }
   }
-
   return (
     <View style={styles.container}>
-    {permisos ? (
-      <Camera type = {tipoCamara} ref = {ref => setCameraRef(ref)}></Camera>
-    ):(<Text>No acceso a la camera</Text>)}
-    <Button tittle = "Tomar Foto" onPress = {tomarFoto}></Button>
-    <StatusBar style = "auto"/>
+      {permisos ? (
+      <Camera style = {{width:'100%'}} type = {tipoCamara} ref = {ref => setCameraRef(ref)}/>
+      ):(<Text>No acceso a la camera</Text>)}
+      <Button title = "Tomar Foto" onPress = {tomarFoto}/>
+      <StatusBar style="auto" />
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000ff',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-  }
+  },
 });
