@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
-import {Camera} from 'expo-camera';
+import {Camera, useCameraPermissions} from 'expo-camera';
 import { useState, useEffect } from 'react';
 import { Button, Image } from 'react-native';
 
@@ -45,12 +45,14 @@ export default function App() {
   }
   return (
     <View style={styles.container}>
-      {permisos ? (
-      <Camera style = {{height: 400}} type = {tipoCamara} ref = {ref => setCameraRef(ref)}/>
-      ):(<Text>No acceso a la camera</Text>)}
+      <View style = {styles.cameraContainer}>
+        {permisos ? (
+        <Camera style = {{height: 400}} type = {tipoCamara} ref = {ref => setCameraRef(ref)}/>
+        ):(<Text>No acceso a la camera</Text>)}
+      </View>
       <Button title = "Tomar Foto" onPress = {tomarFoto}/>
       {foto && (
-        <Image source = {{uri:foto}} style = {{width:300, height:400}}/>
+        <Image source = {{uri:foto}} style = {styles.preview}/>
       )}
       <StatusBar style="auto" />
     </View>
@@ -63,5 +65,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  cameraContainer: {
+    width: '90%',
+    height: 400,
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginBottom: 20,
+  },
+
+  preview: {
+    width: 200,
+    height: 200,
+    marginTop: 20,
+    borderRadius: 10,
   },
 });
